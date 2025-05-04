@@ -89,6 +89,7 @@ class PerGame(Base):
 '''
 INSERTING DATA
 '''
+
 def insert_per_game_data(data_to_insert, batch_size=1000):
     # Insert data into the database in batches, batch size = 1000 if not specified
     try:

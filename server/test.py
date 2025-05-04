@@ -1,7 +1,9 @@
-import csv
-from database import insert_per_game_data, PerGame, session
+import csv, string
+from database_pergame import insert_per_game_data, PerGame
+from database_players import process_players_data, insert_players_data, Players, session, insert_players_by_file
 
 
+'''
 """
 GET PLAYERS DATA
 """
@@ -76,6 +78,14 @@ def main():
     
     # Insert data into the database
     insert_per_game_data(players_data)
+
+if __name__ == "__main__":
+    main()
+'''
+
+
+def main():
+    insert_players_by_file()
 
 if __name__ == "__main__":
     main()
