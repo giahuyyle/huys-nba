@@ -1,0 +1,25 @@
+.navbar {
+    width: 100%;
+    padding: 0.5rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: clamp(10px, 2vw, 20px);  /* Responsive gap */
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+img {
+    height: clamp(1.5rem, 5vw, 2rem);  /* Responsive image height */
+    width: auto;
+    object-fit: contain;
+}
+
+/* Media query for small screens */
+@media screen and (max-width: 480px) {
+    .nav-links {
+        gap: 10px;  /* Smaller gap on phones */
+    }
+}
