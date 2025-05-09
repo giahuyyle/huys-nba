@@ -1,0 +1,52 @@
+.games-list {
+    display: flex; /* Align items in a row */
+    gap: 1rem; /* Add spacing between game cards */
+    overflow-x: auto; /* Allow horizontal scrolling if content overflows */
+    padding: 1rem;
+}
+
+.game-card {
+    flex: 0 0 auto; /* Prevent cards from shrinking and ensure they stay in a row */
+    width: 200px; /* Set a fixed width for each card */
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    text-decoration: none; /* Remove underline from links */
+    color: inherit; /* Inherit text color */
+    display: block; /* Make the entire card clickable */
+}
+
+.game-card:hover {
+    cursor: pointer;
+    transform: translateY(-5px);
+}
+
+.game-card h2 {
+    margin-top: 5%;
+}
+
+.game-card img {
+    width: 100%; /* Make the image fill the container width */
+    height: 200px; /* Reset height */
+    border-radius: 4px;
+}
+
+.games {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.games-title {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.games-footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: #888;
+    font-size: 0.9rem;
+}

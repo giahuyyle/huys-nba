@@ -11,6 +11,10 @@
     align-items: center;
 }
 
+.nav-links a:hover {
+    cursor: pointer;
+}
+
 img {
     height: clamp(1.5rem, 5vw, 2rem);  /* Responsive image height */
     width: auto;
