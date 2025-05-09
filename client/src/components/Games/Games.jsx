@@ -34,9 +34,7 @@ const Games = () => {
                     <p>No games available</p>
                 )}
             </div>
-            <div className="games-footer">
-                <p>© 2025 Huy Le. All rights reserved</p>
-            </div>
+            <h2>More games are on the way!</h2>
         </div>
     );
 };

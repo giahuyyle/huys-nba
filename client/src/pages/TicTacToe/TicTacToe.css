@@ -1,0 +1,78 @@
+.tic-tac-toe {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+.tic-tac-toe h1 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns */
+    grid-template-rows: repeat(4, 1fr); /* 4 rows */
+    gap: 2px; /* Space between cells */;
+    width: 450px; /* Set the board width */
+    height: 450px; /* Set the board height */
+    background-color: #ddd;
+    border: 2px solid #333;
+}
+
+.cell {
+    background-color: #fff;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cell:hover {
+    background-color: #f0f0f0;
+}
+
+/* Disable pointer for the first row */
+.board .cell:nth-child(-n+4) {
+    cursor: default; /* Default cursor instead of pointer */
+}
+
+/* Disable pointer for the first column */
+.board .cell:nth-child(4n+1) {
+    cursor: default; /* Default cursor instead of pointer */
+}
+
+.player-field {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    gap: 0.5rem; /* Space between input and button */
+}
+
+.player-input {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px; /* Set a fixed width for the input */
+}
+
+.give-up-button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.give-up-button:hover {
+    background-color: #e60000;
+}

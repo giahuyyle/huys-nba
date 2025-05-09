@@ -3,6 +3,7 @@
     gap: 1rem; /* Add spacing between game cards */
     overflow-x: auto; /* Allow horizontal scrolling if content overflows */
     padding: 1rem;
+    justify-content: center;
 }
 
 .game-card {
