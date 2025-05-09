@@ -3,3 +3,4 @@
 __pycache__
 *.py[cod]
 server/test.py
+.DS_Store
