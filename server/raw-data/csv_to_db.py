@@ -1,3 +1,8 @@
+"""
+Load data into one single SQLite database from .csv files
+Each .csv file is one table in the DB
+"""
+
 import os
 import pandas as pd
 import sqlite3
@@ -8,28 +13,28 @@ load_dotenv()
 
 # Directory for CSV files
 csv_directory = os.getenv("CSV_DIR")
-output_directory = os.getenv("OUTPUT_DIR")
+output_database = os.getenv("OUTPUT_DB")  # Path to the single output .db file
+
+# Create a single SQLite DB connection
+conn = sqlite3.connect(output_database)
 
 for filename in os.listdir(csv_directory):
-    # print(filename)
     if filename.endswith('.csv'):
-        # print()
-        team_name = os.path.splitext(filename)[0]  # e.g., "lakers"
+        # Use the filename (without extension) as the table name
+        table_name = os.path.splitext(filename)[0]  # e.g., "lakers"
         csv_path = os.path.join(csv_directory, filename)
-        # print(csv_path)
 
         # Read CSV into DataFrame
         df = pd.read_csv(csv_path)
 
-        # Create a SQLite DB for the team
-        db_path = os.path.join(output_directory, f'{team_name}.db')
-        # print(db_path)
+        # Rename the last column to 'additionals' if its name is '-9999'
+        if df.columns[-1] == '-9999':
+            df.rename(columns={df.columns[-1]: 'additionals'}, inplace=True)
 
-        conn = sqlite3.connect(db_path)
+        # Save the DataFrame into the DB as a table (overwrite if exists)
+        df.to_sql(table_name, conn, if_exists='replace', index=False)
 
-        # Save the DataFrame into the DB (overwrite if exists)
-        df.to_sql('players', conn, if_exists='replace', index=False)
-        conn.close()
+        print(f'Successfully stored {table_name} into {output_database}')
 
-        print(f'Successfully stored {team_name} into {db_path}\n')
-        # print()
+# Close the database connection
+conn.close()
