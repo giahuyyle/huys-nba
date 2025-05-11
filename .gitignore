@@ -5,4 +5,4 @@ __pycache__
 server/test.py
 .DS_Store
 *.db
-/test_query.py
+server/test_query.py

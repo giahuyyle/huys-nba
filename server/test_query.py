@@ -16,10 +16,11 @@ db_path = os.getenv("OUTPUT_DB")
 conn = sqlite3.connect("/Users/huylegia/Coding-Projects/Python/nba-project/server/raw-data/players.db")
 cursor = conn.cursor()
 
-def test_query(columns: list[str], rows: list[str]) -> list[list[str]]:
+def test_query(columns: list[str], rows: list[str]) -> dict:
     """
-    takes two lists of teams, and return a list of players for each column, row
+    takes two lists of teams, and return a dictionary of players for each column, row
     """
+    players = {}
     for row in rows:
         for col in columns:
             try:
@@ -29,10 +30,15 @@ def test_query(columns: list[str], rows: list[str]) -> list[list[str]]:
                 """
                 cursor.execute(query)
                 result = cursor.fetchall()
-                print(f"\nPlayers that have played for {row} and {col}:", result)
+                players[(row, col)] = result
             except sqlite3.Error as e:
                 print(f"An error occurred: {e}")
                 continue
+    return players
 
-        
-test_query(columns, rows)
+players = test_query(columns, rows)
+
+for key, val in players.items():
+    print(f"{key}: {val}\n")
+
+conn.close()
