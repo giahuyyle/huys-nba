@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 
 # Open .env file
-dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
+dotenv_path = os.path.join(os.path.dirname(__file__), '..', '..', '.env')
 if os.path.exists(dotenv_path): 
     load_dotenv(dotenv_path)
     print(f"Environment variables loaded from {dotenv_path}")
@@ -135,7 +135,7 @@ def insert_players_by_file():
 def main():
     # Create the database tables
     try:
-        Base.metadata.create_all(bind=engine)
+        # Base.metadata.create_all(bind=engine)
         print("Database tables created successfully.")
     except Exception as e:
         print(f"Error creating database tables: {e}")
