@@ -5,4 +5,5 @@ __pycache__
 server/test.py
 .DS_Store
 *.db
-server/test_query.py
+test_query_sqlite3.py
+test_query_psql.py
