@@ -51,7 +51,8 @@
     display: flex;
     align-items: center;
     margin-top: 1rem;
-    gap: 0.5rem; /* Space between input and button */
+    gap: 0.5rem;
+    position: relative; /* Needed for absolute positioning of suggestions */
 }
 
 .player-input {
@@ -75,4 +76,29 @@
 
 .give-up-button:hover {
     background-color: #e60000;
+}
+
+.suggestions-list {
+    position: absolute;
+    top: 100%; /* Directly below the input */
+    left: 0;
+    width: 200px; /* Match input width */
+    background: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 10;
+    margin: 0;
+    padding: 0.5rem;
+    list-style: none;
+}
+
+.suggestions-list li {
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.suggestions-list li:hover {
+    background: #f0f0f0;
 }
