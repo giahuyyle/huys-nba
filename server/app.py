@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 #from test_query_sqlite3 import get_player_list
-from test_query_psql import get_players_by_name
+from database.queries_players import get_players_by_name
 
 app = Flask(__name__)
 
@@ -16,7 +16,7 @@ def get_player_list(player_name):
 
 if __name__ == '__main__':
     # Enable CORS for all routes
-    # CORS(app)
+    CORS(app, origins=["http://localhost:5173"])
     
     # Run the Flask app
     app.run(debug=True)
