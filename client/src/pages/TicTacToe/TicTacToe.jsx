@@ -17,14 +17,25 @@ function getRandomTeams(n) {
     return result;
 };
 
+const BOARD_SIZE = 4;
+
 const TicTacToe = () => {
     const [input, setInput] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [selectedTeams, setSelectedTeams] = useState([]);
+    const [selectedCell, setSelectedCell] = useState(null);
+
+    // create a array of length BOARD_SIZE, and each element of the array is
+    // an array of length BOARD_SIZE, consisting of null values
+    const [board, setBoard] = useState(
+        Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null))
+    );
 
     useEffect(() => {
         setSelectedTeams(getRandomTeams(6));
     }, []);
+
+    console.log(selectedTeams);
 
     useEffect (() => {
         const fetchPlayers = async () => {
@@ -47,9 +58,20 @@ const TicTacToe = () => {
         return () => clearTimeout(timeout);
     }, [input]);
 
+    const handleCellClick = (row, col) => {
+        // ignore first row/column
+        if (row === 0 || cell === 0) return;
+
+        // if cell is filled, ignore
+        if (board[row][col]) return;
+
+        // else, set cell as selected
+        setSelectedCell( {row, col} );
+    };
+
     const renderCell = (row, col) => {
         // Top-left cell is empty
-        if (row === 0 && col === 0) return null;
+        if (row === 0 && col === 0) return <img src="src/assets/logo.png"/>;
         // First row (excluding top-left): teams 0,1,2
         else if (row === 0 && col > 0) {
             const Logo = teams[selectedTeams[col - 1]]
