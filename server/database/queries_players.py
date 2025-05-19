@@ -1,4 +1,4 @@
-from database.database_players import session, Players
+from database.database_players import SessionLocal, Players
 from dotenv import load_dotenv
 import os
 
@@ -9,6 +9,7 @@ def get_players_by_name(player_name):
     :param player_name: The name of the player to search for.
     :return: A list of players matching the name.
     """
+    session = SessionLocal()
     try:
         # Use SQLAlchemy to query the database
         players = session.query(Players).filter(Players.Player.ilike(f"%{player_name}%")).all()
@@ -21,5 +22,7 @@ def get_players_by_name(player_name):
         session.rollback()
         print(f"Error fetching: {e}")
         return []
+    finally:
+        session.close()
 
 #print(get_players_by_name("mAn"))
