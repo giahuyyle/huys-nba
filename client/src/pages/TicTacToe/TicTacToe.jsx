@@ -5,17 +5,20 @@ import "./TicTacToe.css";
 
 const teamKeys = Object.keys(teams);
 
+function capitalize(str) {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 function getRandomTeams(n) {
     const arr = [...teamKeys];
     const result = [];
-
     while (result.length < n && arr.length > 0) {
-        const i = Math.floor(Math.random() * arr.length);
-        // pop the team at index i from the array, and append it to result
-        result.push(arr.splice(i, 1)[0]);
+        const idx = Math.floor(Math.random() * arr.length);
+        result.push(arr.splice(idx, 1)[0]);
     }
     return result;
-};
+}
 
 const BOARD_SIZE = 4;
 
@@ -23,21 +26,49 @@ const TicTacToe = () => {
     const [input, setInput] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [selectedTeams, setSelectedTeams] = useState([]);
-    const [selectedCell, setSelectedCell] = useState(null);
-
-    // create a array of length BOARD_SIZE, and each element of the array is
-    // an array of length BOARD_SIZE, consisting of null values
+    const [selectedCell, setSelectedCell] = useState(null); // {row, col}
     const [board, setBoard] = useState(
         Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null))
     );
+    const [helper, setHelper] = useState("Select a cell to start");
+    const [commonPlayers, setCommonPlayers] = useState({});
+    const [lastCheckedPlayer, setLastCheckedPlayer] = useState(null);
+    const [lastCheckResult, setLastCheckResult] = useState(null);
 
     useEffect(() => {
         setSelectedTeams(getRandomTeams(6));
     }, []);
 
-    console.log(selectedTeams);
+    useEffect(() => {
+        const fetchCommonPlayers = async () => {
+            if (selectedTeams.length !== 6) return;
+            try {
+                const rows = selectedTeams.slice(0, 3).join(",");
+                const cols = selectedTeams.slice(3, 6).join(",");
+                const response = await api.get(`/common_players?rows=${rows}&cols=${cols}`);
+                setCommonPlayers(response.data || {});
+            } catch (err) {
+                console.error("Error fetching common players:", err);
+                setCommonPlayers({});
+            }
+        };
+        fetchCommonPlayers();
+    }, [selectedTeams]);
 
-    useEffect (() => {
+    useEffect(() => {
+        if (!selectedCell) {
+            setHelper("Select a cell");
+        } else {
+            // Only for non-header cells
+            if (selectedCell.row > 0 && selectedCell.col > 0) {
+                const team1 = capitalize(selectedTeams[selectedCell.col - 1]);
+                const team2 = capitalize(selectedTeams[selectedCell.row + 2]);
+                setHelper(`Currently selecting cell between ${capitalize(team1)} and ${capitalize(team2)}`);
+            }
+        }
+    }, [selectedCell, selectedTeams]);
+
+    useEffect(() => {
         const fetchPlayers = async () => {
             if (input.trim() === "" || input.length < 3) {
                 setSuggestions([]);
@@ -46,76 +77,110 @@ const TicTacToe = () => {
             try {
                 const response = await api.get(`/players/${encodeURIComponent(input)}`);
                 setSuggestions(response.data || []);
-                console.log(suggestions);
             } catch (err) {
                 setSuggestions([]);
-                console.error("Error fetching players:", err);
             }
-        }
-
-        // only fetch players after user stops typing for 300ms (0.3s)
+        };
         const timeout = setTimeout(fetchPlayers, 300);
         return () => clearTimeout(timeout);
     }, [input]);
 
-    const handleCellClick = (row, col) => {
-        // ignore first row/column
-        if (row === 0 || cell === 0) return;
+    const validatePlayer = (player, team1, team2, row, col) => {
+        if (!player || !commonPlayers) return false;
+        // only validate cells not in 1st row/column
+        if (row <= 0 || col <= 0) return false;
+        const rowTeam = selectedTeams[row + 2];
+        const colTeam = selectedTeams[col - 1];
+        const key = `('${colTeam}', '${rowTeam}')`;
+        const validPlayers = commonPlayers[key] || [];
+        return validPlayers.includes(player.additionals);
+    };
 
-        // if cell is filled, ignore
-        if (board[row][col]) return;
+    const handleSuggestionClick = (player) => {
+        if (!selectedCell) return;
+        const { row, col } = selectedCell;
+        const team1 = selectedTeams[selectedCell.col - 1];
+        const team2 = selectedTeams[selectedCell.row + 2];
+        const isValid = validatePlayer(player, team1, team2, row, col);
 
-        // else, set cell as selected
-        setSelectedCell( {row, col} );
+        setLastCheckedPlayer(player);
+        setLastCheckResult(isValid);
+
+        if (isValid) {
+            const newBoard = board.map(arr => arr.slice());
+            newBoard[row][col] = player.name;
+            setBoard(newBoard);
+            setHelper(`${player.name} has been selected`);
+            setSelectedCell(null);
+            setInput("");
+            setSuggestions([]);
+        } else {
+            setHelper(`${player.name} has not played for both ${capitalize(team1)} and ${capitalize(team2)}`);
+        }
     };
 
     const renderCell = (row, col) => {
-        // Top-left cell is empty
-        if (row === 0 && col === 0) return <img src="src/assets/logo.png"/>;
-        // First row (excluding top-left): teams 0,1,2
-        else if (row === 0 && col > 0) {
-            const Logo = teams[selectedTeams[col - 1]]
-            return <Logo />;
+        if (row === 0 && col === 0) return null;
+        if (row === 0 && col > 0) {
+            const TeamLogo = teams[selectedTeams[col - 1]];
+            return TeamLogo ? <TeamLogo /> : null;
         }
-        // First column (excluding top-left): teams 3,4,5
-        else if (col === 0 && row > 0) {
-            const Logo = teams[selectedTeams[row + 2]];
-            return <Logo />;
+        if (col === 0 && row > 0) {
+            const TeamLogo = teams[selectedTeams[row + 2]];
+            return TeamLogo ? <TeamLogo /> : null;
         }
-        // Other cells: empty
+        // Player name if filled
+        if (board[row][col]) return board[row][col];
+        // Highlight if selected
+        if (selectedCell && selectedCell.row === row && selectedCell.col === col) {
+            return <span className="selected-cell">?</span>;
+        }
         return null;
     };
 
     return (
         <div className="tic-tac-toe">
+            <div className="helper">
+                <h2>{helper}</h2>
+            </div>
             <div className="board">
-                {Array.from({ length: 16 }).map((_, idx) => {
-                    const row = Math.floor(idx / 4);
-                    const col = idx % 4;
+                {Array.from({ length: BOARD_SIZE * BOARD_SIZE }).map((_, idx) => {
+                    const row = Math.floor(idx / BOARD_SIZE);
+                    const col = idx % BOARD_SIZE;
                     return (
-                        <div key={idx} className="cell">
+                        <div
+                            key={idx}
+                            className={`cell${selectedCell && selectedCell.row === row && selectedCell.col === col ? " active" : ""}`}
+                            onClick={() => {
+                                // Only allow selection for non-header cells
+                                if (row === 0 || col === 0) return;
+                                if (board[row][col]) return;
+                                setSelectedCell({ row, col });
+                            }}
+                        >
                             {selectedTeams.length === 6 ? renderCell(row, col) : null}
                         </div>
                     );
                 })}
             </div>
             <div className="player-field">
-                <input 
-                    type="text" 
-                    placeholder="Select a Player" 
+                <input
+                    type="text"
+                    placeholder="Select a Player"
                     className="player-input"
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     autoComplete="off"
+                    disabled={!selectedCell}
                 />
                 <button className="give-up-button">Give Up?</button>
-                { suggestions.length > 0 && (
+                {suggestions.length > 0 && selectedCell && (
                     <ul className="suggestions-list">
-                        {
-                            suggestions.map((player) => (
-                                <li key={player.id}>{player.name}</li>
-                            ))
-                        }
+                        {suggestions.map((player) => (
+                            <li key={player.id} onClick={() => handleSuggestionClick(player)}>
+                                {player.name}
+                            </li>
+                        ))}
                     </ul>
                 )}
             </div>

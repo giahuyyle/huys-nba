@@ -28,7 +28,7 @@ const teams = {
     "suns": NBALogos.PHX,
     "thunder": NBALogos.OKC,
     "timberwolves": NBALogos.MIN,
-    "trail blazers": NBALogos.POR,
+    "blazers": NBALogos.POR,
     "warriors": NBALogos.GSW,
     "wizards": NBALogos.WAS
 };

@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem;
+    padding: 0;
 }
 
 .tic-tac-toe h1 {
@@ -101,4 +101,12 @@
 
 .suggestions-list li:hover {
     background: #f0f0f0;
+}
+
+.cell.active {
+    outline: 2px solid #4a5feb;
+}
+.selected-cell {
+    color: #4a5feb;
+    font-weight: bold;
 }
