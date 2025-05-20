@@ -47,6 +47,7 @@ const TicTacToe = () => {
                 const cols = selectedTeams.slice(3, 6).join(",");
                 const response = await api.get(`/common_players?rows=${rows}&cols=${cols}`);
                 setCommonPlayers(response.data || {});
+                console.log("Common players:", response.data);
             } catch (err) {
                 console.error("Error fetching common players:", err);
                 setCommonPlayers({});

@@ -1,7 +1,7 @@
 import * as NBALogos from 'react-nba-logos';
 
 const teams = {
-    "76ers": NBALogos.PHI,
+    "sixers": NBALogos.PHI,
     "blazers": NBALogos.POR,
     "bucks": NBALogos.MIL,
     "cavaliers": NBALogos.CLE,
