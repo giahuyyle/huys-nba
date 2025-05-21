@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import api from "../../api";
-import teams from "./Teams";
+import api from "../../utils/api";
+import teams from "../../utils/Teams";
 import "./TicTacToe.css";
 
 const teamKeys = Object.keys(teams);
@@ -120,7 +120,7 @@ const TicTacToe = () => {
     };
 
     const renderCell = (row, col) => {
-        if (row === 0 && col === 0) return null;
+        if (row === 0 && col === 0) return <img src="src/assets/logo.png" />;
         if (row === 0 && col > 0) {
             const TeamLogo = teams[selectedTeams[col - 1]];
             return TeamLogo ? <TeamLogo /> : null;
