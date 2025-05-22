@@ -20,7 +20,7 @@ const Games = () => {
 
     return (
         <div className="games">
-            <h1 className="games-title">Games</h1>
+            <h2 className="games-title">Games</h2>
             <div className="games-list">
                 {games.length > 0 ? (
                     games.map((game) => (

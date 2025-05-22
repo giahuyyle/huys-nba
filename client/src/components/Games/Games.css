@@ -4,6 +4,7 @@
     overflow-x: auto; /* Allow horizontal scrolling if content overflows */
     padding: 1rem;
     justify-content: center;
+    flex-wrap: wrap;;
 }
 
 .game-card {

@@ -1,5 +1,5 @@
 .player-field {
-    display: flex;
+    display: inline-block;
     align-items: center;
     justify-content: center;
     margin-top: 1rem;
@@ -13,6 +13,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     width: 200px; /* Set a fixed width for the input */
+    margin-right: 10px;
 }
 
 .give-up-button {
@@ -31,7 +32,7 @@
 }
 
 .suggestions-list {
-    position: absolute;
+    position: flex;
     top: 100%; /* Directly below the input */
     left: 0;
     width: 200px; /* Match input width */
@@ -62,6 +63,11 @@
     margin-bottom: 16px;
 }
 
+.helper-text {
+    max-width: 326px;
+    word-break: break-word;
+}
+
 .top10-box {
     display: flex;
     flex-direction: row;
@@ -89,4 +95,11 @@
 .player-box {
     margin-left: 10px;
     text-align: left;
+}
+
+.top10-box.correct {
+    background: #d4edda;
+    border-color: #28a745;
+    color: #155724;
+    transition: background 0.3s, border-color 0.3s;
 }

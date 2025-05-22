@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import api from "../../utils/api";
 import teams from "../../utils/Teams";
 
-const teamKeys = Object.keys(teams);
-
 const mock_Top10 = [
     { id: 1, name: "LeBron James", team: "lakers" },
     { id: 2, name: "Kevin Durant", team: "suns" },
@@ -22,6 +20,8 @@ const Top10 = () => {
     const [input, setInput] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [top10Players, setTop10Players] = useState(Array(10).fill(null));
+    const [listName, setListName] = useState("");
+    const [helper, setHelper] = useState("Select a Player");
 
     useEffect(() => {
         const fetchPlayers = async () => {
@@ -40,26 +40,49 @@ const Top10 = () => {
         return () => clearTimeout(timeout);
     }, [input]);
 
+    // Example handler for selecting a player
+    const handleSelectPlayer = (selectedPlayer) => {
+        const idx = mock_Top10.findIndex(
+            p => p.name.toLowerCase() === selectedPlayer.name.toLowerCase()
+        );
+        if (idx !== -1 && !top10Players[idx]) {
+            const updated = [...top10Players];
+            updated[idx] = selectedPlayer;
+            setTop10Players(updated);
+            setHelper(`You guessed ${selectedPlayer.name} correctly!`);
+        } else if (idx !== -1 && top10Players[idx]) {
+            setHelper(`${selectedPlayer.name} is already guessed!`);
+            setInput("");
+            setSuggestions([]);
+        }
+        setInput("");
+        setSuggestions([]);
+    };
+
     return (
         <div className="top-10">
             <div className="top10-boxes">
+                <h3 className="helper-text">{helper}</h3>
                 {[...Array(10)].map((_, i) => {
                     const player = mock_Top10[i];
+                    const guessedPlayer = top10Players[i];
                     const TeamLogo = player && player.team ? teams[player.team] : null;
 
                     return (
-                        <div className="top10-box" key={i}>
-                            <span className="number-box">{i+1}.</span>
+                        <div
+                            className={`top10-box${guessedPlayer ? " correct" : ""}`}
+                            key={i}
+                        >
+                            <span className="number-box">{i + 1}.</span>
                             <span className="player-team">
                                 {TeamLogo && <TeamLogo size={32} />}
                             </span>
                             <span className="player-box">
-                                {player.name}
-                                { /* TO-DO: implement correct players or not */}
+                                {guessedPlayer ? guessedPlayer.name : ""}
                             </span>
                         </div>
                     );
-            })}
+                })}
             </div>
             <div className="player-field">
                 <input
@@ -74,7 +97,7 @@ const Top10 = () => {
                 {suggestions.length > 0  && (
                     <ul className="suggestions-list">
                         {suggestions.map((player) => (
-                            <li key={player.id}>
+                            <li key={player.id} onClick={() => handleSelectPlayer(player)}>
                                 {player.name}
                             </li>
                         ))}
