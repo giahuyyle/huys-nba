@@ -60,11 +60,13 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 360px;
     margin-bottom: 16px;
 }
 
 .helper-text {
-    max-width: 326px;
+    height: 60px;
+    max-width: 360px;
     word-break: break-word;
 }
 

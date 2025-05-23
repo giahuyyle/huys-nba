@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import api from "../../utils/api";
 import teams from "../../utils/Teams";
 
+/*
 const mock_Top10 = [
     { id: 1, name: "LeBron James", team: "lakers" },
     { id: 2, name: "Kevin Durant", team: "suns" },
@@ -15,10 +16,12 @@ const mock_Top10 = [
     { id: 9, name: "Joel Embiid", team: "sixers" },
     { id: 10, name: "Jimmy Butler", team: "warriors" }
 ]
+*/
 
 const Top10 = () => {
     const [input, setInput] = useState("");
     const [suggestions, setSuggestions] = useState([]);
+    const [mockTop10, setMockTop10] = useState([]);
     const [top10Players, setTop10Players] = useState(Array(10).fill(null));
     const [listName, setListName] = useState("");
     const [helper, setHelper] = useState("Select a Player");
@@ -40,9 +43,21 @@ const Top10 = () => {
         return () => clearTimeout(timeout);
     }, [input]);
 
+    useEffect(() => {
+        const fetchTop10 = async () => {
+            try {
+                const response = await api.get("/top10?date=1");
+                setMockTop10(response.data || []);
+            } catch (err) {
+                setMockTop10([]);
+            }
+        };
+        fetchTop10();
+    }, []);
+
     // Example handler for selecting a player
     const handleSelectPlayer = (selectedPlayer) => {
-        const idx = mock_Top10.findIndex(
+        const idx = mockTop10.findIndex(
             p => p.name.toLowerCase() === selectedPlayer.name.toLowerCase()
         );
         if (idx !== -1 && !top10Players[idx]) {
@@ -51,9 +66,11 @@ const Top10 = () => {
             setTop10Players(updated);
             setHelper(`You guessed ${selectedPlayer.name} correctly!`);
         } else if (idx !== -1 && top10Players[idx]) {
-            setHelper(`${selectedPlayer.name} is already guessed!`);
+            setHelper(`${selectedPlayer.name} is already guessed`);
             setInput("");
             setSuggestions([]);
+        } else {
+            setHelper(`${selectedPlayer.name} is not on the list`);
         }
         setInput("");
         setSuggestions([]);
@@ -64,7 +81,7 @@ const Top10 = () => {
             <div className="top10-boxes">
                 <h3 className="helper-text">{helper}</h3>
                 {[...Array(10)].map((_, i) => {
-                    const player = mock_Top10[i];
+                    const player = mockTop10[i];
                     const guessedPlayer = top10Players[i];
                     const TeamLogo = player && player.team ? teams[player.team] : null;
 
