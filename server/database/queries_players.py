@@ -1,8 +1,46 @@
 from database.database_players import SessionLocal, Players
+from database.database_pergame import SessionLocalPerGame, PerGame
 from dotenv import load_dotenv
-import os
+import os, sqlite3
 
-def get_players_by_name(player_name):
+def get_top_10(date: str) -> list[dict]:
+    """
+    Fetch the designated top 10 of a specific date
+
+    :param date: The date to fetch the top 10 topic for
+    :return: A list of dictionaries containing the 10 players of the list
+    """
+    # trial: data from the 24-25 database, top 10 ppg
+    session = SessionLocal()
+    try:
+        session = SessionLocalPerGame()
+        top10_players = session.query(PerGame).filter(
+                (PerGame.team == '2TM') | 
+                (~PerGame.player.in_(session.query(PerGame.player).filter(PerGame.team == '2TM'))
+            )
+        ).limit(10).all()
+
+        top10_players = [
+            {
+                "id": player.id, 
+                "name": player.player,
+                "team": player.team,
+                "additionals": player.player_additional,
+            }
+            for player in top10_players
+        ]
+
+        return top10_players
+    
+    except Exception as e:
+        session.rollback()
+        print(f"Error fetching: {e}")
+        return []
+
+    finally:
+        session.close()
+
+def get_players_by_name(player_name: str):
     """
     Fetch player data from the database based on the player's name.
     

@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 
 from sqlalchemy import create_engine, Column, Integer, String, Float
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base, scoped_session
 
 
 # Open .env file
@@ -40,8 +40,8 @@ Base = declarative_base()
 engine = create_engine(db_url, echo=True)
 
 # Create session
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-session = SessionLocal()
+SessionLocalPerGame = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+session = SessionLocalPerGame()
 
 
 """
