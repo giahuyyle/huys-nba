@@ -1,7 +1,7 @@
 import "./Top10.css";
 import { useEffect, useState } from "react";
 import api from "../../utils/api";
-import teams from "../../utils/Teams";
+import { teamNicknames, teamAbbreviations } from "../../utils/Teams";
 
 /*
 const mock_Top10 = [
@@ -20,11 +20,14 @@ const mock_Top10 = [
 
 const Top10 = () => {
     const [input, setInput] = useState("");
+    const [todayTitle, setTodayTitle] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [mockTop10, setMockTop10] = useState([]);
     const [top10Players, setTop10Players] = useState(Array(10).fill(null));
     const [listName, setListName] = useState("");
     const [helper, setHelper] = useState("Select a Player");
+
+    //setTodayTitle("PPG Leaders of the 24/25 season");
 
     useEffect(() => {
         const fetchPlayers = async () => {
@@ -53,6 +56,7 @@ const Top10 = () => {
             }
         };
         fetchTop10();
+        setTodayTitle("PPG Leaders of the 24/25 season");
     }, []);
 
     // Example handler for selecting a player
@@ -80,10 +84,11 @@ const Top10 = () => {
         <div className="top-10">
             <div className="top10-boxes">
                 <h3 className="helper-text">{helper}</h3>
+                <h3 className="todays-title">Today's Topic: {todayTitle}</h3>
                 {[...Array(10)].map((_, i) => {
                     const player = mockTop10[i];
                     const guessedPlayer = top10Players[i];
-                    const TeamLogo = player && player.team ? teams[player.team] : null;
+                    const TeamLogo = player && player.team ? teamAbbreviations[player.team] : null;
 
                     return (
                         <div

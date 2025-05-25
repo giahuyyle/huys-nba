@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import api from "../../utils/api";
-import teams from "../../utils/Teams";
+import { teamNicknames } from "../../utils/Teams";
 import "./TicTacToe.css";
 
-const teamKeys = Object.keys(teams);
+const teamKeys = Object.keys(teamNicknames);
 
 function capitalize(str) {
     if (!str) return "";
@@ -122,11 +122,11 @@ const TicTacToe = () => {
     const renderCell = (row, col) => {
         if (row === 0 && col === 0) return <img src="src/assets/logo.png" />;
         if (row === 0 && col > 0) {
-            const TeamLogo = teams[selectedTeams[col - 1]];
+            const TeamLogo = teamNicknames[selectedTeams[col - 1]];
             return TeamLogo ? <TeamLogo /> : null;
         }
         if (col === 0 && row > 0) {
-            const TeamLogo = teams[selectedTeams[row + 2]];
+            const TeamLogo = teamNicknames[selectedTeams[row + 2]];
             return TeamLogo ? <TeamLogo /> : null;
         }
         // Player name if filled
