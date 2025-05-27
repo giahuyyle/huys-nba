@@ -110,3 +110,12 @@
     color: #4a5feb;
     font-weight: bold;
 }
+
+.cell-player-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    word-break: word-break;
+    text-align: center;
+    display: block;
+    margin: 10%;
+}

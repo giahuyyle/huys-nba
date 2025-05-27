@@ -130,7 +130,9 @@ const TicTacToe = () => {
             return TeamLogo ? <TeamLogo /> : null;
         }
         // Player name if filled
-        if (board[row][col]) return board[row][col];
+        if (board[row][col]) {
+            return <span className="cell-player-name">{board[row][col]}</span>;
+        }
         // Highlight if selected
         if (selectedCell && selectedCell.row === row && selectedCell.col === col) {
             return <span className="selected-cell">?</span>;
