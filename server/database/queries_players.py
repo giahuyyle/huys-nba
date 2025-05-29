@@ -7,7 +7,7 @@ def get_top_10(date: str) -> list[dict]:
     """
     Fetch the designated top 10 of a specific date
 
-    :param date: The date to fetch the top 10 topic for
+    :param: date - The date to fetch the top 10 topic for
     :return: A list of dictionaries containing the 10 players of the list
     """
     # trial: data from the 24-25 database, top 10 ppg

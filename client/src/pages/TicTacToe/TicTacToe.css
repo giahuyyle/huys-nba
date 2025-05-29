@@ -21,6 +21,20 @@
     border: 2px solid #333;
 }
 
+@media (max-width: 500px) {
+    .board {
+        width: 350px;
+        height: 350px;
+    }
+}
+
+@media (min-width: 500px) {
+    .board {
+        width: 450px;
+        height: 450px;
+    }
+}
+
 .cell {
     background-color: #fff;
     border: 1px solid black;

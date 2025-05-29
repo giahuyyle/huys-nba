@@ -49,7 +49,7 @@ const Top10 = () => {
     useEffect(() => {
         const fetchTop10 = async () => {
             try {
-                const response = await api.get("/top10?date=1");
+                const response = await api.get("/top10?date=29may2025");
                 setMockTop10(response.data || []);
             } catch (err) {
                 setMockTop10([]);

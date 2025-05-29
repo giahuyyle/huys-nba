@@ -7,3 +7,4 @@ server/test.py
 *.db
 test_query_sqlite3.py
 test_query_psql.py
+*.json
