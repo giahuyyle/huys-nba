@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database.queries_players import get_players_by_name
-from database.queries_top10 import get_top_10
+from database.queries_top10 import get_top_10, get_top_10_title
 import os, sqlite3
 
 app = Flask(__name__)
@@ -59,6 +59,15 @@ def get_top_10_today():
     """
     date = request.args.get('date', '')
     top_10 = get_top_10(date)
+    return jsonify(top_10)
+
+@app.route("/top10/title", methods=["GET"])
+def get_top_10_today_title():
+    """
+    Fetch the top 10 players for today
+    """
+    date = request.args.get('date', '')
+    top_10 = get_top_10_title(date)
     return jsonify(top_10)
 
 if __name__ == '__main__':

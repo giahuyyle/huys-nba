@@ -11,14 +11,17 @@ def get_top_10(date: str) -> list[dict]:
     :return: A list of dictionaries containing the 10 players of the list
     """
     # trial: data from the 24-25 database, top 10 ppg
-    session = SessionLocal()
     try:
         session = SessionLocalPerGame()
-        top10_players = session.query(PerGame).filter(
+        top10_players = (
+            session.query(PerGame).filter(
                 (PerGame.team == '2TM') | 
                 (~PerGame.player.in_(session.query(PerGame.player).filter(PerGame.team == '2TM'))
-            )
-        ).limit(10).all()
+            ))
+            .order_by(PerGame.trb.desc())
+            .limit(10)
+            .all()
+        )
 
         top10_players = [
             {
