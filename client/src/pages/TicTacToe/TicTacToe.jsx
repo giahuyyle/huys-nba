@@ -25,19 +25,72 @@ const BOARD_SIZE = 4;
 const TicTacToe = () => {
     const [input, setInput] = useState("");
     const [suggestions, setSuggestions] = useState([]);
-    const [selectedTeams, setSelectedTeams] = useState([]);
     const [selectedCell, setSelectedCell] = useState(null); // {row, col}
-    const [board, setBoard] = useState(
-        Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null))
-    );
-    const [helper, setHelper] = useState("Select a cell to start");
-    const [commonPlayers, setCommonPlayers] = useState({});
+    const [helper, setHelper] = useState(() => {
+        const stored = localStorage.getItem("ttt_helper");
+        return stored ? stored : "Select a cell to start";
+    });
+    const [showGiveUpPrompt, setShowGiveUpPrompt] = useState(false);
+    const [hasGivenUp, setHasGivenUp] = useState(() => {
+        const stored = localStorage.getItem("ttt_hasGivenUp");
+        return stored ? JSON.parse(stored) : false;
+    });
     const [lastCheckedPlayer, setLastCheckedPlayer] = useState(null);
     const [lastCheckResult, setLastCheckResult] = useState(null);
 
-    useEffect(() => {
+    const handleGiveUpClick = () => setShowGiveUpPrompt(true);
+
+    const handleConfirmGiveUp = () => {
+        setHasGivenUp(true);
+        setShowGiveUpPrompt(false);
+        setHelper("You gave up! Click 'New Game' to restart.");
+    };
+
+    const handleCancelGiveUp = () => setShowGiveUpPrompt(false);
+
+    const handleNewGame = () => {
+        setHasGivenUp(false);
+        setBoard(Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null)));
         setSelectedTeams(getRandomTeams(6));
-    }, []);
+        setHelper("Select a cell to start");
+        localStorage.removeItem("ttt_board");
+        localStorage.removeItem("ttt_selectedTeams");
+    };
+
+    // Load from localStorage or use defaults
+    const [selectedTeams, setSelectedTeams] = useState(() => {
+        const stored = localStorage.getItem("ttt_selectedTeams");
+        return stored ? JSON.parse(stored) : getRandomTeams(6);
+    });
+    const [board, setBoard] = useState(() => {
+        const stored = localStorage.getItem("ttt_board");
+        return stored ? JSON.parse(stored) : Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null));
+    });
+    const [commonPlayers, setCommonPlayers] = useState(() => {
+        const stored = localStorage.getItem("ttt_commonPlayers");
+        return stored ? JSON.parse(stored) : {};
+    });
+
+    // Save to localStorage on change
+    useEffect(() => {
+        localStorage.setItem("ttt_selectedTeams", JSON.stringify(selectedTeams));
+    }, [selectedTeams]);
+
+    useEffect(() => {
+        localStorage.setItem("ttt_board", JSON.stringify(board));
+    }, [board]);
+
+    useEffect(() => {
+        localStorage.setItem("ttt_commonPlayers", JSON.stringify(commonPlayers));
+    }, [commonPlayers]);
+
+    useEffect(() => {
+        localStorage.setItem("ttt_hasGivenUp", JSON.stringify(hasGivenUp));
+    }, [hasGivenUp]);
+
+    useEffect(() => {
+        localStorage.setItem("ttt_helper", helper);
+    }, [helper]);
 
     useEffect(() => {
         const fetchCommonPlayers = async () => {
@@ -107,9 +160,14 @@ const TicTacToe = () => {
         setLastCheckResult(isValid);
 
         if (isValid) {
-            const newBoard = board.map(arr => arr.slice());
-            newBoard[row][col] = player.name;
-            setBoard(newBoard);
+            const updatedBoard = board.map((rowArr, rIdx) =>
+                rowArr.map((cell, cIdx) =>
+                    rIdx === row && cIdx === col
+                        ? { value: player.name, isCorrect: true }
+                        : cell
+                )
+            );
+            setBoard(updatedBoard);
             setHelper(`${player.name} has been selected`);
             setSelectedCell(null);
             setInput("");
@@ -131,7 +189,14 @@ const TicTacToe = () => {
         }
         // Player name if filled
         if (board[row][col]) {
-            return <span className="cell-player-name">{board[row][col]}</span>;
+            const cell = board[row][col];
+            const isCorrect = typeof cell === "object" ? cell.isCorrect : false;
+            const value = typeof cell === "object" ? cell.value : cell;
+            return (
+                <span className={`cell-player-name${isCorrect ? " cell-correct" : ""}`}>
+                    {value}
+                </span>
+            );
         }
         // Highlight if selected
         if (selectedCell && selectedCell.row === row && selectedCell.col === col) {
@@ -154,7 +219,7 @@ const TicTacToe = () => {
                             key={idx}
                             className={`cell${selectedCell && selectedCell.row === row && selectedCell.col === col ? " active" : ""}`}
                             onClick={() => {
-                                // Only allow selection for non-header cells
+                                if (hasGivenUp) return; // Prevent selection if given up
                                 if (row === 0 || col === 0) return;
                                 if (board[row][col]) return;
                                 setSelectedCell({ row, col });
@@ -173,9 +238,14 @@ const TicTacToe = () => {
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     autoComplete="off"
-                    disabled={!selectedCell}
+                    disabled={!selectedCell || hasGivenUp}
                 />
-                <button className="give-up-button">Give Up?</button>
+                {!hasGivenUp ? (
+                    <button className="give-up-button" onClick={handleGiveUpClick}>Give Up?</button>
+                ) : (
+                    <button className="new-game-button" onClick={handleNewGame}>New Game</button>
+                )}
+                
                 {suggestions.length > 0 && selectedCell && (
                     <ul className="suggestions-list">
                         {suggestions.map((player) => (
@@ -186,6 +256,18 @@ const TicTacToe = () => {
                     </ul>
                 )}
             </div>
+
+            {showGiveUpPrompt && (
+                <div className="give-up-modal">
+                    <div className="give-up-modal-content">
+                        <p>Are you sure you want to give up?</p>
+                        <button className="give-up-button" onClick={handleConfirmGiveUp}>Give Up</button>
+                        <button className="cancel-button" onClick={handleCancelGiveUp}>Cancel</button>
+                    </div>
+                </div>
+            )}
+
+            
         </div>
     );
 };

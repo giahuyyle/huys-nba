@@ -1,6 +1,7 @@
 import "./Top10.css";
 import { useEffect, useState } from "react";
 import api from "../../utils/api";
+import { getDate } from "../../utils/date";
 import { teamNicknames, teamAbbreviations } from "../../utils/Teams";
 
 /*
@@ -20,11 +21,11 @@ const mock_Top10 = [
 
 const Top10 = () => {
     const [input, setInput] = useState("");
+    const [todayDate, setTodayDate] = useState(getDate());
     const [todayTitle, setTodayTitle] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [mockTop10, setMockTop10] = useState([]);
     const [top10Players, setTop10Players] = useState(Array(10).fill(null));
-    const [listName, setListName] = useState("");
     const [helper, setHelper] = useState("Select a Player");
 
     //setTodayTitle("PPG Leaders of the 24/25 season");
@@ -49,14 +50,25 @@ const Top10 = () => {
     useEffect(() => {
         const fetchTop10 = async () => {
             try {
-                const response = await api.get("/top10?date=29may2025");
+                const response = await api.get(`/top10?date=${todayDate}`);
                 setMockTop10(response.data || []);
             } catch (err) {
                 setMockTop10([]);
             }
         };
         fetchTop10();
-        setTodayTitle("PPG Leaders of the 24/25 season");
+    }, []);
+
+    useEffect(() => {
+        const fetchTitle = async () => {
+            try {
+                const response = await api.get(`/top10/title?date=${todayDate}`);
+                setTodayTitle(response.data || "");
+            } catch (err) {
+                setTodayTitle("");
+            }
+        };
+        fetchTitle();
     }, []);
 
     // Example handler for selecting a player
