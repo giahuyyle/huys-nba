@@ -13,7 +13,8 @@
 .helper h2 {
     font-weight: 500;
     height: 70px;
-    width: 350px;
+    width: 450px;
+    font-size: 1.2rem;
 }
 
 .board {
@@ -32,12 +33,18 @@
         width: 350px;
         height: 350px;
     }
+    .helper h2 {
+        width: 350px;
+    }
 }
 
 @media (min-width: 500px) {
     .board {
         width: 450px;
         height: 450px;
+    }
+    .helper h2 {
+        width: 450px;
     }
 }
 

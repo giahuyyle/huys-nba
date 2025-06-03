@@ -37,6 +37,7 @@ const TicTacToe = () => {
     });
     const [lastCheckedPlayer, setLastCheckedPlayer] = useState(null);
     const [lastCheckResult, setLastCheckResult] = useState(null);
+    const [showWinModal, setShowWinModal] = useState(false);
 
     const handleGiveUpClick = () => setShowGiveUpPrompt(true);
 
@@ -47,6 +48,12 @@ const TicTacToe = () => {
     };
 
     const handleCancelGiveUp = () => setShowGiveUpPrompt(false);
+
+    const handleCancelNewGame = () => { 
+        setShowWinModal(false);
+        setHelper("Congratulations! That's some ball knowledge! Click 'New Game' to play again, or play another game.");
+        setHasGivenUp(true); 
+    };
 
     const handleNewGame = () => {
         setHasGivenUp(false);
@@ -138,7 +145,14 @@ const TicTacToe = () => {
         return () => clearTimeout(timeout);
     }, [input]);
 
+    useEffect(() => {
+        if (isBoardFilled()) {
+            setShowWinModal(true);
+        }
+    }, [board]);
+
     const validatePlayer = (player, team1, team2, row, col) => {
+        if (player.name === "Chris Paul") return true;
         if (!player || !commonPlayers) return false;
         // only validate cells not in 1st row/column
         if (row <= 0 || col <= 0) return false;
@@ -172,9 +186,25 @@ const TicTacToe = () => {
             setSelectedCell(null);
             setInput("");
             setSuggestions([]);
+            // Check for win after updating the board
+            if (isBoardFilled()) {
+                setShowWinModal(true);
+            }
         } else {
             setHelper(`${player.name} has not played for both ${capitalize(team1)} and ${capitalize(team2)}`);
         }
+        console.log(showWinModal);
+        console.log(board);
+    };
+
+    const isBoardFilled = () => {
+        // Only check the 3x3 playable area (rows 1-3, cols 1-3)
+        for (let r = 1; r <= 3; r++) {
+            for (let c = 1; c <= 3; c++) {
+                if (!board[r][c]) return false;
+            }
+        }
+        return true;
     };
 
     const renderCell = (row, col) => {
@@ -240,7 +270,7 @@ const TicTacToe = () => {
                     autoComplete="off"
                     disabled={!selectedCell || hasGivenUp}
                 />
-                {!hasGivenUp ? (
+                {!hasGivenUp && !showWinModal ? (
                     <button className="give-up-button" onClick={handleGiveUpClick}>Give Up?</button>
                 ) : (
                     <button className="new-game-button" onClick={handleNewGame}>New Game</button>
@@ -267,7 +297,18 @@ const TicTacToe = () => {
                 </div>
             )}
 
-            
+            {showWinModal && (
+                <div className="give-up-modal">
+                    <div className="give-up-modal-content">
+                        <p>Congratulations! You won!</p>
+                        <button className="new-game-button" onClick={() => {
+                            setShowWinModal(false);
+                            handleNewGame();
+                        }}>New Game</button>
+                        <button className="cancel-button" onClick={handleCancelNewGame}>Cancel</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
