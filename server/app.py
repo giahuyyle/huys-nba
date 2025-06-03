@@ -59,6 +59,7 @@ def get_top_10_today():
     """
     date = request.args.get('date', '')
     top_10 = get_top_10(date)
+    print(top_10)
     return jsonify(top_10)
 
 @app.route("/top10/title", methods=["GET"])
