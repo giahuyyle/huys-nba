@@ -22,13 +22,23 @@ const mock_Top10 = [
 const Top10 = () => {
     const [input, setInput] = useState("");
     const [todayDate, setTodayDate] = useState(getDate());
-    const [todayTitle, setTodayTitle] = useState("");
+    const [todayTitle, setTodayTitle] = useState(() => {
+        return localStorage.getItem("top10Title") || "";
+    });
     const [suggestions, setSuggestions] = useState([]);
-    const [mockTop10, setMockTop10] = useState([]);
-    const [top10Players, setTop10Players] = useState(Array(10).fill(null));
+    const [mockTop10, setMockTop10] = useState(() => {
+        const saved = localStorage.getItem("top10");
+        return saved ? JSON.parse(saved) : [];
+    });
+    const [top10Players, setTop10Players] = useState(() => {
+        const saved = localStorage.getItem("top10Players");
+        return saved ? JSON.parse(saved) : Array(10).fill(null);
+    });
     const [helper, setHelper] = useState("Select a Player");
-
-    //setTodayTitle("PPG Leaders of the 24/25 season");
+    const [guessedPlayers, setGuessedPlayers] = useState(() => {
+        const saved = localStorage.getItem("guessedPlayers");
+        return saved ? JSON.parse(saved) : [];
+    });
 
     useEffect(() => {
         const fetchPlayers = async () => {
@@ -52,11 +62,12 @@ const Top10 = () => {
             try {
                 const response = await api.get(`/top10?date=${todayDate}`);
                 setMockTop10(response.data || []);
+                localStorage.setItem("top10", JSON.stringify(response.data || []));
             } catch (err) {
                 setMockTop10([]);
             }
         };
-        fetchTop10();
+        if (!mockTop10.length) fetchTop10();
     }, []);
 
     useEffect(() => {
@@ -64,15 +75,27 @@ const Top10 = () => {
             try {
                 const response = await api.get(`/top10/title?date=${todayDate}`);
                 setTodayTitle(response.data || "");
+                localStorage.setItem("top10Title", response.data || "");
             } catch (err) {
                 setTodayTitle("");
             }
         };
-        fetchTitle();
+        if (!todayTitle) fetchTitle();
     }, []);
+
+    useEffect(() => {
+        localStorage.setItem("guessedPlayers", JSON.stringify(guessedPlayers));
+    }, [guessedPlayers]);
+
+    useEffect(() => {
+        localStorage.setItem("top10Players", JSON.stringify(top10Players));
+    }, [top10Players]);
 
     // Example handler for selecting a player
     const handleSelectPlayer = (selectedPlayer) => {
+        if (!guessedPlayers.includes(selectedPlayer.id)) {
+            setGuessedPlayers([...guessedPlayers, selectedPlayer.id]);
+        }
         const idx = mockTop10.findIndex(
             p => p.name.toLowerCase() === selectedPlayer.name.toLowerCase()
         );

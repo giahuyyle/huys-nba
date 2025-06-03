@@ -42,7 +42,7 @@ const teamAbbreviations = {
     "MEM": NBALogos.MEM,
     "ATL": NBALogos.ATL,
     "MIA": NBALogos.MIA,
-    "CHA": NBALogos.CHA,
+    "CHO": NBALogos.CHA,
     "UTA": NBALogos.UTA,
     "SAC": NBALogos.SAC,
     "NYK": NBALogos.NYK,
