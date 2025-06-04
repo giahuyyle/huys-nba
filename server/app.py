@@ -73,7 +73,7 @@ def get_top_10_today_title():
 
 if __name__ == '__main__':
     # Enable CORS for all routes
-    CORS(app, origins=["http://localhost:5173"])
+    CORS(app, origins=[os.getenv("FRONTEND_URL")])
     
     # Run the Flask app
     app.run(debug=True)
