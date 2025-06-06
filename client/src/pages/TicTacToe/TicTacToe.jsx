@@ -152,7 +152,6 @@ const TicTacToe = () => {
     }, [board]);
 
     const validatePlayer = (player, team1, team2, row, col) => {
-        if (player.name === "Chris Paul") return true;
         if (!player || !commonPlayers) return false;
         // only validate cells not in 1st row/column
         if (row <= 0 || col <= 0) return false;
