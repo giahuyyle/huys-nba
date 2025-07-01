@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from database.queries_players import get_players_by_name
-from database.queries_top10 import get_top_10, get_top_10_title
+from .database.queries_players import get_players_by_name
+from .database.queries_top10 import get_top_10, get_top_10_title
 import os, sqlite3
 
 app = Flask(__name__)
@@ -73,7 +73,7 @@ def get_top_10_today_title():
 
 if __name__ == '__main__':
     # Enable CORS for all routes
-    CORS(app, origins=[os.getenv("FRONTEND_URL")])
+    CORS(app, origins=[os.getenv("FRONTEND_URL"), os.getenv("FRONTEND_URL")])
     
     # Run the Flask app
     app.run(debug=True)

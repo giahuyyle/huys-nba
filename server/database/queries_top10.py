@@ -1,7 +1,7 @@
 import firebase_admin, os
 from firebase_admin import credentials, db
 from dotenv import load_dotenv
-from database.database_pergame import SessionLocalPerGame, PerGame
+from .database_pergame import SessionLocalPerGame, PerGame
 
 load_dotenv()
 

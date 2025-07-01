@@ -1,5 +1,5 @@
-from database.database_players import SessionLocal, Players
-from database.database_pergame import SessionLocalPerGame, PerGame
+from .database_players import SessionLocal, Players
+from .database_pergame import SessionLocalPerGame, PerGame
 from dotenv import load_dotenv
 import os, sqlite3
 
