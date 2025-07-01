@@ -14,12 +14,12 @@ else:
     print(f"Warning: .env file not found at {dotenv_path}. Environment variables may not be loaded.")
 
 # Load environment variables
-db_type = os.getenv("DB_TYPE")
-db_host = os.getenv("DB_HOST")
-db_port = os.getenv("DB_PORT")
-database = os.getenv("DB_NAME_PLAYERS")               # Database name for players
-db_user = os.getenv("DB_USER")
-db_password = os.getenv("DB_PASS")
+db_type = os.getenv("DB_TYPE1")
+db_host = os.getenv("DB_HOST1")
+db_port = os.getenv("DB_PORT1")
+database = os.getenv("DB_NAME1")               # Database name for players
+db_user = os.getenv("DB_USER1")
+db_password = os.getenv("DB_PASS1")
 
 
 # Contrsuct the database URL
@@ -36,6 +36,7 @@ def construct_db_url(db_type, db_host, db_port, database, db_user, db_password):
 
 # Create engine
 db_url = construct_db_url(db_type, db_host, db_port, database, db_user, db_password)
+db_url = os.getenv("DB_POOLER_CONN", db_url)
 Base = declarative_base()
 engine = create_engine(db_url, echo=True)
 
@@ -135,7 +136,8 @@ def insert_players_by_file():
 def main():
     # Create the database tables
     try:
-        # Base.metadata.create_all(bind=engine)
+        Base.metadata.create_all(bind=engine)
+        insert_players_by_file()
         print("Database tables created successfully.")
     except Exception as e:
         print(f"Error creating database tables: {e}")

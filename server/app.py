@@ -6,6 +6,19 @@ import os, sqlite3
 
 app = Flask(__name__)
 
+CORS(
+    app, 
+    resources={
+        r"/*": {
+            "origins": ["http://localhost:5173", "http://127.0.0.1:5173"],
+            "methods": ["GET", "POST", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "expose_headers": ["Content-Range", "X-Content-Range"]
+        }
+     },
+    supports_credentials=True
+)
+
 db_path = os.getenv("OUTPUT_DB")
 
 def test_query(columns: list[str], rows: list[str]) -> dict:
@@ -73,7 +86,5 @@ def get_top_10_today_title():
 
 if __name__ == '__main__':
     # Enable CORS for all routes
-    CORS(app, origins=[os.getenv("FRONTEND_URL"), os.getenv("FRONTEND_URL")])
-    
     # Run the Flask app
     app.run(debug=True)
