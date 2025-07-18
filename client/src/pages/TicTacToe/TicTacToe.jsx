@@ -192,8 +192,6 @@ const TicTacToe = () => {
         } else {
             setHelper(`${player.name} has not played for both ${capitalize(team1)} and ${capitalize(team2)}`);
         }
-        console.log(showWinModal);
-        console.log(board);
     };
 
     const isBoardFilled = () => {
