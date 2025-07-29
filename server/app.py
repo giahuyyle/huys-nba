@@ -16,6 +16,7 @@ CORS(
             "expose_headers": ["Content-Range", "X-Content-Range"]
         }
     },
+    supports_credentials=True
 )
 
 db_path = os.getenv("OUTPUT_DB")
