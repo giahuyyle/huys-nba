@@ -22,22 +22,35 @@ const mock_Top10 = [
 const Top10 = () => {
     const [input, setInput] = useState("");
     const [todayDate, setTodayDate] = useState(getDate());
+
     const [todayTitle, setTodayTitle] = useState(() => {
         return localStorage.getItem("top10Title") || "";
     });
+
     const [suggestions, setSuggestions] = useState([]);
+
     const [mockTop10, setMockTop10] = useState(() => {
         const saved = localStorage.getItem("top10");
         return saved ? JSON.parse(saved) : [];
     });
+
     const [top10Players, setTop10Players] = useState(() => {
         const saved = localStorage.getItem("top10Players");
         return saved ? JSON.parse(saved) : Array(10).fill(null);
     });
+
     const [helper, setHelper] = useState("Select a Player");
+
     const [guessedPlayers, setGuessedPlayers] = useState(() => {
         const saved = localStorage.getItem("guessedPlayers");
         return saved ? JSON.parse(saved) : [];
+    });
+
+    const [showGiveUpPrompt, setShowGiveUpPrompt] = useState(false);
+    
+    const [hasGivenUp, setHasGivenUp] = useState(() => {
+        const stored = localStorage.getItem("ttt_hasGivenUp");
+        return stored ? JSON.parse(stored) : false;
     });
 
     useEffect(() => {
